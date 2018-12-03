@@ -1,12 +1,15 @@
 package com.shoutanwq.data.learning.models;
 
-import com.shoutanwq.data.learning.UuidConverter;
-import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,8 +19,7 @@ import java.util.UUID;
 @Table(name = "class")
 public class Clazz {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private String id;
     @Column
     private String teacher;
     @Column

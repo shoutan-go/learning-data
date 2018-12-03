@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,12 +19,11 @@ import java.util.UUID;
 @Table(name = "order")
 public class Order {
     @Id
-    @GeneratedValue
-    private UUID id;
+    private String id;
     @Column
-    private UUID user;
+    private String user;
     @Column(name = "class")
-    private UUID clazz;
+    private String clazz;
     @Column
     private Date createdAt;
     @Column

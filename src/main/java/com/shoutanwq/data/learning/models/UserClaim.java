@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -24,7 +23,7 @@ public class UserClaim {
     @Column
     private String value;
     @Column
-    private UUID userId;
+    private String userId;
     @Column
     private Date createdAt;
     @Column

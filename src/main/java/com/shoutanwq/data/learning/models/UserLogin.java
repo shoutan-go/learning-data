@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,13 +21,17 @@ public class UserLogin {
 
     @Column
     private String name;
+
     @Column
     private String key;
+
     @Column
     @Id
-    private UUID userId;
+    private String userId;
+
     @Column
     private Date createdAt;
+
     @Column
     private Date updatedAt;
 }
