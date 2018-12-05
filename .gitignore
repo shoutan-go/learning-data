@@ -28,3 +28,8 @@ application-*.*
 *.log
 mvn*
 .mvn
+
+qrcode
+*.png
+
+.DS_Store

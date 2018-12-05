@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,18 +22,27 @@ import java.util.Date;
 public class UserProfile {
     @Id
     private String userId;
+
     @Column
     private String displayName;
+
     @Column
     private String picture;
+
     @Column
     private int gender;
+
     @Column
     private String location;
+
     @Column
     private String website;
+
     @Column
+    @CreationTimestamp
     private Date createdAt;
+
     @Column
+    @UpdateTimestamp
     private Date updatedAt;
 }

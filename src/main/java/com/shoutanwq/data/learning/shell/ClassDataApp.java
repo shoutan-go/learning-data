@@ -1,18 +1,26 @@
 package com.shoutanwq.data.learning.shell;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.shoutanwq.data.learning.dao.*;
-import com.shoutanwq.data.learning.models.GoInfo;
-import com.shoutanwq.data.learning.models.GoMove;
-import com.shoutanwq.data.learning.models.Order;
-import com.shoutanwq.data.learning.models.UserProfile;
+import com.shoutanwq.data.learning.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +30,9 @@ import java.util.stream.Collectors;
  */
 @ShellComponent
 public class ClassDataApp {
+
+    @Autowired
+    ICouponDAO couponDAO;
 
     @Autowired
     IClazzDAO clazzDAO;
@@ -37,6 +48,66 @@ public class ClassDataApp {
 
     @Autowired
     IGoMoveDAO goMoveDAO;
+
+    @Autowired
+    ICourseDAO courseDAO;
+
+    @ShellMethod("生成课程")
+    public String createClass(String course,
+                              @ShellOption(defaultValue = "https://shoutan-images.oss-cn-qingdao" +
+                                      ".aliyuncs.com/course1/class1.jpg?x-oss-process=style/thumb-150w") String teacher,
+                              @ShellOption(defaultValue = "[0,0,2,4,7,9,11,14,16,18,21,23,25,28,30,32,35,37,39,42," +
+                                      "44]") String validatedIn,
+                              @ShellOption(defaultValue = "39900") int price) {
+        Optional<Course> courseOptional = courseDAO.findById(course);
+        if (courseOptional.isPresent()) {
+            Clazz newClz = new Clazz();
+            newClz.setTeacher(teacher);
+            newClz.setCourse(course);
+            newClz.setValidatedIn(validatedIn);
+            newClz.setPrice(price);
+            Clazz savedClazz = clazzDAO.saveAndFlush(newClz);
+            return savedClazz.getId();
+        } else {
+            return "CourseId 不存在";
+        }
+    }
+
+    @ShellMethod("生成对应班级二维码")
+    public String classQrcode(String classId, @ShellOption(defaultValue = "1") int count,
+                              @ShellOption(defaultValue = "./qrcode") String filePath) throws WriterException,
+            IOException {
+        Optional<Clazz> byId = clazzDAO.findById(classId);
+        if (byId.isPresent()) {
+            List<String> retList = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                Coupon coupon = new Coupon();
+                coupon.setClazz(classId);
+                Coupon savedCoupon = couponDAO.saveAndFlush(coupon);
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                BitMatrix bitMatrix = qrCodeWriter.encode(String.format("http://course.shoutanwq.com/coupon/%s",
+                        savedCoupon.getId()), BarcodeFormat.QR_CODE, 128, 128);
+                File folder = new File(filePath);
+                folder.mkdirs();
+                Path path = FileSystems.getDefault().getPath(String.format("%s/%s.%s", filePath, savedCoupon.getId(),
+                        "png"));
+                MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+            }
+            openFolder(filePath);
+            return "OK";
+        } else {
+            throw new IllegalArgumentException("classId 不存在");
+        }
+    }
+
+    private void openFolder(String path) throws IOException {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.indexOf("win") >= 0) {
+            Runtime.getRuntime().exec(String.format("Explorer.exe \"%s\"", path));
+        } else {
+            Runtime.getRuntime().exec(String.format("open %s", path));
+        }
+    }
 
     @ShellMethod("获取班级内对局信息")
     public List<String> studentInfo(String id) {
