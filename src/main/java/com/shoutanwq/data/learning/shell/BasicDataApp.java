@@ -9,6 +9,7 @@ import org.springframework.shell.standard.ShellMethod;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @ShellComponent
@@ -59,9 +60,8 @@ public class BasicDataApp {
     @ShellMethod("获取所有班级信息")
     public List<String> classes() {
         List<Clazz> all = clazzDAO.findAll();
-        return all.stream().map(clazz -> {
-            String.format("%s, %s, %s", clazz.getId(), clazz.getBeginAt(), clazz.getValidatedIn())
-        });
+        return all.stream().map(clazz -> String.format("%s, %s, %s", clazz.getId(), clazz.getBeginAt(),
+                clazz.getValidatedIn())).collect(Collectors.toList());
     }
 
     @ShellMethod("Get coupon information")
