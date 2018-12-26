@@ -61,7 +61,7 @@ public class BasicDataApp {
         List<Clazz> all = clazzDAO.findAll();
         return all.stream().map(clazz -> {
             String.format("%s, %s, %s", clazz.getId(), clazz.getBeginAt(), clazz.getValidatedIn())
-        })
+        });
     }
 
     @ShellMethod("Get coupon information")
