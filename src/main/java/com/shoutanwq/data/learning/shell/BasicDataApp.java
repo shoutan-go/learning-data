@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -53,6 +54,14 @@ public class BasicDataApp {
     public String clazz(String id) {
         Optional<Clazz> byId = clazzDAO.findById(id);
         return byId.get().toString();
+    }
+
+    @ShellMethod("获取所有班级信息")
+    public List<String> classes() {
+        List<Clazz> all = clazzDAO.findAll();
+        return all.stream().map(clazz -> {
+            String.format("%s, %s, %s", clazz.getId(), clazz.getBeginAt(), clazz.getValidatedIn())
+        })
     }
 
     @ShellMethod("Get coupon information")
