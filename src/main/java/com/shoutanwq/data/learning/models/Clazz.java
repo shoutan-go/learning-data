@@ -30,7 +30,6 @@ public class Clazz {
     private String course;
 
     @Column
-    @CreationTimestamp
     private Date beginAt;
 
     @Column

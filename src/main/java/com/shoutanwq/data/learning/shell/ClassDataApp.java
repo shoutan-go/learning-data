@@ -17,10 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,14 +57,20 @@ public class ClassDataApp {
                                       ".aliyuncs.com/course1/class1.jpg?x-oss-process=style/thumb-150w") String teacher,
                               @ShellOption(defaultValue = "[0,0,2,4,7,9,11,14,16,18,21,23,25,28,30,32,35,37,39,42," +
                                       "44]") String validatedIn,
-                              @ShellOption(defaultValue = "39900") int price) {
+                              @ShellOption(defaultValue = ShellOption.NULL, help = "default today") String beginAt,
+                              @ShellOption(defaultValue = "39900") int price) throws ParseException {
         Optional<Course> courseOptional = courseDAO.findById(course);
         if (courseOptional.isPresent()) {
+            Date begin = new Date();
+            if (!StringUtils.isEmpty(beginAt)) {
+                begin = new SimpleDateFormat("yyyy-MM-dd").parse(beginAt);
+            }
             Clazz newClz = new Clazz();
             newClz.setTeacher(teacher);
             newClz.setCourse(course);
             newClz.setValidatedIn(validatedIn);
             newClz.setPrice(price);
+            newClz.setBeginAt(begin);
             Clazz savedClazz = clazzDAO.saveAndFlush(newClz);
             return savedClazz.getId();
         } else {
