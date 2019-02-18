@@ -84,7 +84,6 @@ public class ClassDataApp {
             IOException {
         Optional<Clazz> byId = clazzDAO.findById(classId);
         if (byId.isPresent()) {
-            List<String> retList = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 Coupon coupon = new Coupon();
                 coupon.setClazz(classId);
@@ -93,6 +92,9 @@ public class ClassDataApp {
                 BitMatrix bitMatrix = qrCodeWriter.encode(String.format("http://course.shoutanwq.com/coupon/%s",
                         savedCoupon.getId()), BarcodeFormat.QR_CODE, 128, 128);
                 File folder = new File(filePath);
+                if (folder.exists()) {
+                    folder.delete();
+                }
                 folder.mkdirs();
                 Path path = FileSystems.getDefault().getPath(String.format("%s/%s.%s", filePath, savedCoupon.getId(),
                         "png"));
